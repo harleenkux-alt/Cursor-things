@@ -146,13 +146,15 @@ h2 {
   place-items: center;
   padding: 1rem;
   pointer-events: none;
+  visibility: hidden;
   background: rgba(1, 4, 12, 0);
   opacity: 0;
-  transition: opacity 260ms ease, background 260ms ease;
+  transition: opacity 260ms ease, background 260ms ease, visibility 260ms ease;
 }
 
 .modal-overlay.is-open {
   pointer-events: auto;
+  visibility: visible;
   background: rgba(1, 4, 12, 0.78);
   opacity: 1;
 }

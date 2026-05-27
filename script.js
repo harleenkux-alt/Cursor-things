@@ -22,6 +22,7 @@
     lastFocusedElement = document.activeElement;
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
+    openButton.setAttribute("aria-expanded", "true");
     document.body.classList.add("modal-open");
     closeButton.focus();
     game.start();
@@ -30,6 +31,7 @@
   function closeModal() {
     overlay.classList.remove("is-open");
     overlay.setAttribute("aria-hidden", "true");
+    openButton.setAttribute("aria-expanded", "false");
     document.body.classList.remove("modal-open");
 
     if (lastFocusedElement) {
