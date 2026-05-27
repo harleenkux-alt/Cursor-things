@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floating Maze Widget</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-content">
+    <section class="hero">
+      <p class="eyebrow">Dark future interface</p>
+      <h1>Floating Maze Widget</h1>
+      <p>
+        Tap the glowing button in the bottom-right corner to open a playable
+        canvas maze game.
+      </p>
+    </section>
+  </main>
+
+  <button
+    class="maze-widget-button"
+    id="mazeWidgetButton"
+    type="button"
+    aria-label="Open maze game"
+    aria-haspopup="dialog"
+    aria-controls="mazeModal"
+    aria-expanded="false"
+  >
+    <span class="button-glow"></span>
+    <span class="button-icon" aria-hidden="true">M</span>
+  </button>
+
+  <div class="modal-overlay" id="mazeOverlay" aria-hidden="true">
+    <section
+      class="maze-modal"
+      id="mazeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mazeTitle"
+    >
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Mission protocol</p>
+          <h2 id="mazeTitle">Neon Maze</h2>
+        </div>
+        <button class="close-button" id="closeMazeButton" type="button" aria-label="Close maze game">
+          &times;
+        </button>
+      </div>
+
+      <p class="game-instructions">
+        Use the arrow keys to guide the cyan explorer to the green exit.
+      </p>
+
+      <div class="canvas-shell">
+        <canvas id="mazeCanvas" width="520" height="520" aria-label="Playable maze game"></canvas>
+      </div>
+
+      <div class="game-footer">
+        <p id="gameStatus" class="game-status" aria-live="polite">Reach the exit to win.</p>
+        <button class="secondary-button" id="restartMazeButton" type="button">Restart</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="maze.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
