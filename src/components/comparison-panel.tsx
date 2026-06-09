@@ -1,10 +1,8 @@
 "use client";
 
 import { Download, Loader2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ComparisonEmptyState } from "@/components/comparison-empty-state";
+import { SignInMockup } from "@/components/sign-in-mockup";
 import { simulationById } from "@/lib/simulations/catalog";
 import { useSimulatorStore } from "@/store/use-simulator-store";
 
@@ -23,81 +21,79 @@ export function ComparisonPanel() {
     link.click();
   };
 
+  const showDemo = !imageUrl;
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <CardTitle>Before / after comparison</CardTitle>
-            <CardDescription>
-              Compare your upload with the {simulation.name.toLowerCase()} simulation.
-            </CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Badge>{simulation.category}</Badge>
-            <Badge tone={result ? "good" : "neutral"}>{result ? "Generated" : "Awaiting upload"}</Badge>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {imageUrl ? (
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[#191d1b]">
-            {result ? (
-              <div className="grid min-h-[28rem] grid-cols-2">
-                <div className="relative flex items-center justify-center border-r border-white/10">
-                  <span className="absolute left-4 top-4 z-10 rounded-full bg-black/55 px-3 py-1 text-xs font-bold text-white">
-                    Original
-                  </span>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={imageUrl} alt="Original uploaded interface" className="max-h-[60vh] w-full object-contain" />
-                </div>
-                <div className="relative flex items-center justify-center">
-                  <span className="absolute left-4 top-4 z-10 rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-bold text-white">
-                    {simulation.name}
-                  </span>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={result.dataUrl}
-                    alt={`${simulation.name} accessibility simulation`}
-                    className="max-h-[60vh] w-full object-contain"
-                  />
-                </div>
-              </div>
+    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-base font-bold">Compare</h2>
+        {imageUrl && result ? (
+          <Button type="button" size="sm" variant="secondary" onClick={download}>
+            <Download aria-hidden="true" size={15} />
+            Download
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="relative grid grid-cols-2 gap-4">
+        {/* Original panel */}
+        <div>
+          <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f9fafb] p-4 sm:min-h-[320px]">
+            {showDemo ? (
+              <SignInMockup />
             ) : (
-              <div className="relative flex min-h-[28rem] items-center justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imageUrl} alt="Original uploaded interface" className="max-h-[60vh] w-full object-contain" />
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={imageUrl} alt="Original upload" className="max-h-[50vh] w-full object-contain" />
+            )}
+          </div>
+          <p className="mt-2 text-center text-sm font-medium text-[var(--muted-foreground)]">Original</p>
+        </div>
+
+        {/* Simulation panel */}
+        <div>
+          <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f9fafb] p-4 sm:min-h-[320px]">
+            {showDemo ? (
+              <div style={{ filter: "blur(1.5px) contrast(0.7) brightness(0.85)" }}>
+                <SignInMockup />
               </div>
+            ) : result ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={result.dataUrl}
+                alt={`${simulation.name} simulation`}
+                className="max-h-[50vh] w-full object-contain"
+              />
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={imageUrl!} alt="Generating simulation" className="max-h-[50vh] w-full object-contain opacity-40" />
             )}
 
             {isSimulating ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/42 text-white backdrop-blur-sm">
-                <div className="flex items-center gap-3 rounded-full bg-black/55 px-5 py-3 text-sm font-semibold">
-                  <Loader2 aria-hidden="true" className="animate-spin" size={18} />
-                  Generating simulation...
+              <div className="absolute inset-0 flex items-center justify-center bg-white/70">
+                <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold shadow">
+                  <Loader2 aria-hidden="true" className="animate-spin" size={16} />
+                  Generating...
                 </div>
               </div>
             ) : null}
           </div>
-        ) : (
-          <ComparisonEmptyState />
-        )}
+          <p className="mt-2 text-center text-sm font-medium text-[var(--muted-foreground)]">
+            {showDemo ? "Low Vision Simulation" : simulation.name}
+          </p>
+        </div>
+      </div>
 
-        {imageUrl && result ? (
-          <div className="mt-5 flex justify-end">
-            <Button type="button" onClick={download}>
-              <Download aria-hidden="true" size={16} />
-              Download simulation
-            </Button>
-          </div>
-        ) : null}
+      {showDemo ? (
+        <p className="mt-4 text-center text-sm text-[var(--muted-foreground)]">
+          Example: how a sign-in form appears to someone with low vision. Upload your own design above to test it.
+        </p>
+      ) : null}
 
-        {error ? (
-          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
-            {error}
-          </div>
-        ) : null}
-      </CardContent>
-    </Card>
+      {error ? (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
+          {error}
+        </div>
+      ) : null}
+    </section>
   );
 }

@@ -1,0 +1,76 @@
+"use client";
+
+import { UploadCloud } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { formatBytes } from "@/lib/utils";
+import { useSimulatorStore } from "@/store/use-simulator-store";
+
+export function UploadBar() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const { file, uploadImage, reset, isAnalyzing } = useSimulatorStore();
+
+  const handleFile = useCallback(
+    async (nextFile?: File) => {
+      if (!nextFile) {
+        return;
+      }
+      await uploadImage(nextFile);
+    },
+    [uploadImage]
+  );
+
+  return (
+    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-4">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        className="sr-only"
+        onChange={(event) => void handleFile(event.target.files?.[0])}
+      />
+
+      {file ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="text-sm">
+            <span className="font-semibold">{file.name}</span>
+            <span className="text-[var(--muted-foreground)]"> · {formatBytes(file.size)}</span>
+          </div>
+          <div className="flex gap-2">
+            <Button type="button" variant="secondary" size="sm" onClick={reset}>
+              Remove
+            </Button>
+            <Button type="button" size="sm" onClick={() => inputRef.current?.click()} disabled={isAnalyzing}>
+              Replace
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          onDragEnter={(event) => {
+            event.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragOver={(event) => event.preventDefault()}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(event) => {
+            event.preventDefault();
+            setIsDragging(false);
+            void handleFile(event.dataTransfer.files[0]);
+          }}
+          className={`flex w-full items-center justify-center gap-3 rounded-xl border-2 border-dashed py-8 text-base font-bold transition ${
+            isDragging
+              ? "border-[var(--accent)] bg-[#fdf6ef]"
+              : "border-[var(--border)] bg-white hover:bg-[#fdf6ef]"
+          }`}
+        >
+          <UploadCloud aria-hidden="true" size={22} className="text-[var(--primary)]" />
+          {isAnalyzing ? "Analyzing..." : "Upload"}
+        </button>
+      )}
+    </section>
+  );
+}

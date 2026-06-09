@@ -15,6 +15,7 @@ export type SimulationId =
 export type SimulationDefinition = {
   id: SimulationId;
   name: string;
+  chipLabel?: string;
   category: SimulationCategory;
   summary: string;
   designRisk: string;

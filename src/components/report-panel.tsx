@@ -2,7 +2,7 @@
 
 import { AlertTriangle, CheckCircle2, Info, Ruler } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AnalyzerSeverity } from "@/lib/simulations/types";
 import { formatBytes } from "@/lib/utils";
 import { useSimulatorStore } from "@/store/use-simulator-store";
@@ -24,11 +24,8 @@ export function ReportPanel() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Accessibility scorecard</CardTitle>
-        <CardDescription>
-          Screenshot-based analysis estimates contrast, density, reading effort, and target risk.
-        </CardDescription>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Accessibility scorecard</CardTitle>
       </CardHeader>
       <CardContent>
         {isAnalyzing ? (
@@ -85,8 +82,7 @@ export function ReportPanel() {
           </>
         ) : (
           <div className="rounded-2xl border border-[var(--border)] bg-white/55 p-4 text-sm text-[var(--muted-foreground)]">
-            Upload a screenshot to generate contrast, font-size, touch-target, dense-content, and reading-complexity
-            warnings.
+            Upload a screenshot to see contrast, density, and readability scores.
           </div>
         )}
       </CardContent>
