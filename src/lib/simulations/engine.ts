@@ -7,10 +7,9 @@ type CanvasPair = {
 
 type Matrix = [number, number, number, number, number, number, number, number, number];
 
-const colorBlindnessMatrices: Record<"protanopia" | "deuteranopia" | "tritanopia", Matrix> = {
+const colorBlindnessMatrices: Record<"protanopia" | "deuteranopia", Matrix> = {
   protanopia: [0.567, 0.433, 0, 0.558, 0.442, 0, 0, 0.242, 0.758],
-  deuteranopia: [0.625, 0.375, 0, 0.7, 0.3, 0, 0, 0.3, 0.7],
-  tritanopia: [0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525]
+  deuteranopia: [0.625, 0.375, 0, 0.7, 0.3, 0, 0, 0.3, 0.7]
 };
 
 export async function generateSimulation(imageUrl: string, simulation: SimulationId): Promise<SimulationResult> {
@@ -23,18 +22,20 @@ export async function generateSimulation(imageUrl: string, simulation: Simulatio
     applyColorMatrix(context, canvas, colorBlindnessMatrices[simulation as keyof typeof colorBlindnessMatrices]);
   } else if (simulation === "cataracts") {
     applyCataracts(context, canvas);
-  } else if (simulation === "glaucoma") {
-    applyGlaucoma(context, canvas);
   } else if (simulation === "low-vision") {
     applyLowVision(context, canvas);
+  } else if (simulation === "glare-sensitivity") {
+    applyGlareSensitivity(context, canvas);
   } else if (simulation === "adhd") {
     applyAdhd(context, canvas);
-  } else if (simulation === "dyslexia") {
-    applyDyslexia(context, canvas);
+  } else if (simulation === "cognitive-load") {
+    applyCognitiveLoad(context, canvas);
+  } else if (simulation === "reading-difficulty") {
+    applyReadingDifficulty(context, canvas);
   } else if (simulation === "tremors") {
     applyTremors(context, canvas, image);
-  } else if (simulation === "limited-precision") {
-    applyLimitedPrecision(context, canvas);
+  } else if (simulation === "one-hand-navigation") {
+    applyOneHandNavigation(context, canvas);
   }
 
   return {
@@ -95,11 +96,65 @@ function applyLowVision(context: CanvasRenderingContext2D, canvas: HTMLCanvasEle
   addVignette(context, canvas, "rgba(15, 18, 21, 0.24)", 0.2, 0.95);
 }
 
-function applyGlaucoma(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-  runFilteredPass(context, canvas, "contrast(0.82) saturate(0.78)");
-  addVignette(context, canvas, "rgba(5, 8, 10, 0.92)", 0.18, 0.74);
-  context.fillStyle = "rgba(5, 8, 10, 0.12)";
+function applyGlareSensitivity(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  runFilteredPass(context, canvas, "brightness(1.35) contrast(0.72) saturate(0.88)");
+  context.globalCompositeOperation = "screen";
+  context.fillStyle = "rgba(255, 252, 235, 0.42)";
   context.fillRect(0, 0, canvas.width, canvas.height);
+  context.globalCompositeOperation = "source-over";
+  addVignette(context, canvas, "rgba(255, 255, 255, 0.28)", 0.35, 0.88);
+}
+
+function applyCognitiveLoad(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  runFilteredPass(context, canvas, "contrast(1.04) saturate(1.08)");
+  const scale = Math.min(canvas.width, canvas.height);
+
+  const labels = ["Step 2 of 4", "Required", "New", "Save draft?", "3 unread", "Confirm"];
+  labels.forEach((label, index) => {
+    context.save();
+    context.font = `600 ${Math.max(11, Math.round(scale * 0.018))}px Inter, sans-serif`;
+    const x = (0.08 + (index % 3) * 0.28) * canvas.width;
+    const y = (0.12 + Math.floor(index / 3) * 0.08) * canvas.height;
+    context.fillStyle = index % 2 === 0 ? "rgba(180, 35, 24, 0.82)" : "rgba(37, 99, 235, 0.82)";
+    context.fillRect(x, y, context.measureText(label).width + 16, 24);
+    context.fillStyle = "#fff";
+    context.fillText(label, x + 8, y + 17);
+    context.restore();
+  });
+
+  context.save();
+  context.strokeStyle = "rgba(31, 58, 53, 0.35)";
+  context.setLineDash([6, 6]);
+  context.lineWidth = 2;
+  context.strokeRect(canvas.width * 0.06, canvas.height * 0.22, canvas.width * 0.88, canvas.height * 0.58);
+  context.restore();
+}
+
+function applyReadingDifficulty(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  const original = context.getImageData(0, 0, canvas.width, canvas.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  const bandHeight = Math.max(7, Math.round(canvas.height / 70));
+  for (let y = 0; y < canvas.height; y += bandHeight) {
+    const shift = Math.round((seededRandom(y + 11) - 0.5) * 10);
+    context.putImageData(original, shift, 0, 0, y, canvas.width, Math.min(bandHeight, canvas.height - y));
+  }
+
+  context.save();
+  context.globalAlpha = 0.18;
+  context.filter = "blur(0.7px)";
+  context.drawImage(canvas, 2, 1);
+  context.drawImage(canvas, -2, -1);
+  context.restore();
+
+  context.save();
+  context.fillStyle = "rgba(31, 58, 53, 0.13)";
+  context.font = `${Math.max(12, Math.round(canvas.width / 54))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+  const glyphs = ["b/d", "p/q", "rn/m", "was/saw", "ei/ie"];
+  glyphs.forEach((glyph, index) => {
+    context.fillText(glyph, (0.14 + index * 0.15) * canvas.width, (0.24 + seededRandom(index) * 0.5) * canvas.height);
+  });
+  context.restore();
 }
 
 function applyAdhd(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -140,33 +195,6 @@ function applyAdhd(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement)
   context.restore();
 }
 
-function applyDyslexia(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-  const original = context.getImageData(0, 0, canvas.width, canvas.height);
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  const bandHeight = Math.max(7, Math.round(canvas.height / 70));
-  for (let y = 0; y < canvas.height; y += bandHeight) {
-    const shift = Math.round((seededRandom(y + 11) - 0.5) * 10);
-    context.putImageData(original, shift, 0, 0, y, canvas.width, Math.min(bandHeight, canvas.height - y));
-  }
-
-  context.save();
-  context.globalAlpha = 0.18;
-  context.filter = "blur(0.7px)";
-  context.drawImage(canvas, 2, 1);
-  context.drawImage(canvas, -2, -1);
-  context.restore();
-
-  context.save();
-  context.fillStyle = "rgba(31, 58, 53, 0.13)";
-  context.font = `${Math.max(12, Math.round(canvas.width / 54))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
-  const glyphs = ["b/d", "p/q", "rn/m", "was/saw", "ei/ie"];
-  glyphs.forEach((glyph, index) => {
-    context.fillText(glyph, (0.14 + index * 0.15) * canvas.width, (0.24 + seededRandom(index) * 0.5) * canvas.height);
-  });
-  context.restore();
-}
-
 function applyTremors(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, image: HTMLImageElement) {
   context.clearRect(0, 0, canvas.width, canvas.height);
   const offsets = [
@@ -187,7 +215,7 @@ function applyTremors(context: CanvasRenderingContext2D, canvas: HTMLCanvasEleme
   drawCursorTrail(context, canvas, "rgba(229, 102, 62, 0.86)");
 }
 
-function applyLimitedPrecision(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+function applyOneHandNavigation(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
   runFilteredPass(context, canvas, "contrast(0.92) saturate(0.85)");
   const target = Math.max(44, Math.round(Math.min(canvas.width, canvas.height) * 0.08));
 
@@ -205,6 +233,14 @@ function applyLimitedPrecision(context: CanvasRenderingContext2D, canvas: HTMLCa
       context.stroke();
     }
   }
+
+  // Thumb reach zone — bottom-right corner is easy; top-left is hard
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "rgba(180, 35, 24, 0.22)");
+  gradient.addColorStop(0.55, "rgba(180, 35, 24, 0.06)");
+  gradient.addColorStop(1, "rgba(31, 58, 53, 0.04)");
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
 
   context.restore();
   drawCursorTrail(context, canvas, "rgba(180, 35, 24, 0.82)");

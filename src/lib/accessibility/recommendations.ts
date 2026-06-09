@@ -8,22 +8,6 @@ const simulationGuidance: Partial<Record<SimulationId, DesignRecommendation[]>> 
       rationale: "Cataracts reduce contrast sensitivity and add visual haze.",
       action: "Use stronger text colors, avoid pale gray UI copy, and keep critical borders visible.",
       priority: "High"
-    },
-    {
-      id: "cataracts-scale",
-      title: "Make fine details less essential",
-      rationale: "Blur and yellowing make thin icons, faint dividers, and dense data points harder to parse.",
-      action: "Pair icon-only states with labels and increase minimum text size to 16px or higher.",
-      priority: "Medium"
-    }
-  ],
-  glaucoma: [
-    {
-      id: "glaucoma-critical-center",
-      title: "Keep critical status and next actions in the main task path",
-      rationale: "Peripheral loss means edge-positioned alerts and navigation may be missed.",
-      action: "Repeat high-risk messages near the relevant content, not only in sidebars or corners.",
-      priority: "High"
     }
   ],
   "low-vision": [
@@ -32,6 +16,15 @@ const simulationGuidance: Partial<Record<SimulationId, DesignRecommendation[]>> 
       title: "Strengthen hierarchy through size, spacing, and weight",
       rationale: "Low acuity compresses small visual differences.",
       action: "Use larger headings, clear grouping, and avoid relying on subtle shade changes.",
+      priority: "High"
+    }
+  ],
+  "glare-sensitivity": [
+    {
+      id: "glare-contrast",
+      title: "Increase contrast for bright environments",
+      rationale: "Glare washes out light backgrounds and low-contrast text.",
+      action: "Avoid pure white backgrounds, add stronger text contrast, and reduce glossy UI surfaces.",
       priority: "High"
     }
   ],
@@ -53,15 +46,6 @@ const simulationGuidance: Partial<Record<SimulationId, DesignRecommendation[]>> 
       priority: "High"
     }
   ],
-  tritanopia: [
-    {
-      id: "tritanopia-palette",
-      title: "Review blue/yellow data palettes",
-      rationale: "Tritanopia affects blue/yellow distinction and can flatten charts.",
-      action: "Choose palettes with luminance contrast and direct labels on chart marks.",
-      priority: "Medium"
-    }
-  ],
   adhd: [
     {
       id: "adhd-focus",
@@ -71,11 +55,20 @@ const simulationGuidance: Partial<Record<SimulationId, DesignRecommendation[]>> 
       priority: "High"
     }
   ],
-  dyslexia: [
+  "cognitive-load": [
     {
-      id: "dyslexia-reading",
+      id: "cognitive-load-simplify",
+      title: "Reduce simultaneous decisions",
+      rationale: "Too many labels, steps, and states increase decision fatigue.",
+      action: "Progressively disclose options, group related fields, and remove non-essential badges.",
+      priority: "High"
+    }
+  ],
+  "reading-difficulty": [
+    {
+      id: "reading-difficulty-reading",
       title: "Support scanning and reduce reading fatigue",
-      rationale: "Dense text and tight spacing increase effort for dyslexic readers.",
+      rationale: "Dense text and tight spacing increase effort for readers with difficulty.",
       action: "Use short paragraphs, generous line height, left alignment, and plain-language labels.",
       priority: "High"
     }
@@ -89,12 +82,12 @@ const simulationGuidance: Partial<Record<SimulationId, DesignRecommendation[]>> 
       priority: "High"
     }
   ],
-  "limited-precision": [
+  "one-hand-navigation": [
     {
-      id: "limited-precision-forgiveness",
-      title: "Design forgiving interactions",
-      rationale: "Users with limited precision need tolerance for imprecise taps and clicks.",
-      action: "Increase hit areas, add undo for destructive actions, and avoid tiny hover-only controls.",
+      id: "one-hand-reach",
+      title: "Place key actions within thumb reach",
+      rationale: "One-handed users struggle with top-edge and corner controls.",
+      action: "Move primary actions to the lower half of the screen and increase hit areas.",
       priority: "High"
     }
   ]

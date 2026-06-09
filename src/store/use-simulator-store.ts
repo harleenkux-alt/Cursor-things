@@ -30,7 +30,7 @@ type UploadState = {
 export const useSimulatorStore = create<UploadState>((set, get) => ({
   file: null,
   imageUrl: null,
-  selectedSimulation: "cataracts",
+  selectedSimulation: "low-vision",
   result: null,
   report: null,
   recommendations: [],

@@ -1,16 +1,16 @@
 export type SimulationCategory = "Visual" | "Cognitive" | "Motor";
 
 export type SimulationId =
-  | "cataracts"
-  | "glaucoma"
   | "low-vision"
-  | "protanopia"
   | "deuteranopia"
-  | "tritanopia"
+  | "protanopia"
+  | "cataracts"
+  | "glare-sensitivity"
   | "adhd"
-  | "dyslexia"
+  | "cognitive-load"
+  | "reading-difficulty"
   | "tremors"
-  | "limited-precision";
+  | "one-hand-navigation";
 
 export type SimulationDefinition = {
   id: SimulationId;

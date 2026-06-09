@@ -1,5 +1,4 @@
 import { ProductHero } from "@/components/product-hero";
-import { ResearchNotes } from "@/components/research-notes";
 import { SimulatorWorkspace } from "@/components/simulator-workspace";
 
 export default function Home() {
@@ -7,7 +6,6 @@ export default function Home() {
     <>
       <ProductHero />
       <SimulatorWorkspace />
-      <ResearchNotes />
     </>
   );
 }

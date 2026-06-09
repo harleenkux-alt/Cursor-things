@@ -1,9 +1,11 @@
 "use client";
 
 import { ComparisonPanel } from "@/components/comparison-panel";
+import { ExampleDemo } from "@/components/example-demo";
 import { ImageUploader } from "@/components/image-uploader";
 import { RecommendationsPanel } from "@/components/recommendations-panel";
 import { ReportPanel } from "@/components/report-panel";
+import { SimulationChipBar } from "@/components/simulation-chip-bar";
 import { SimulationSelector } from "@/components/simulation-selector";
 
 export function SimulatorWorkspace() {
@@ -14,7 +16,11 @@ export function SimulatorWorkspace() {
         <SimulationSelector />
       </aside>
 
-      <ComparisonPanel />
+      <div className="space-y-5">
+        <SimulationChipBar />
+        <ComparisonPanel />
+        <ExampleDemo />
+      </div>
 
       <aside className="space-y-5">
         <ReportPanel />
