@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "figma:build": "npm install --prefix figma-plugin && npm run build --prefix figma-plugin"
   },
   "repository": {
     "type": "git",

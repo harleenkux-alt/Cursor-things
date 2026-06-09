@@ -10,7 +10,7 @@ export function SignInMockup() {
       </div>
 
       <label className="mb-1 block text-xs font-semibold">Password</label>
-      <div className="mb-2 h-10 rounded-xl border border-[var(--border)] bg-[var(--workspace)] px-3 py-2 text-sm text-[var(--muted-foreground)]">
+      <div className="mb-2 h-10 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--muted-foreground)]">
         ••••••••
       </div>
       <div className="mb-5 text-right text-xs font-medium underline">Forgot password?</div>
