@@ -11,15 +11,19 @@ const priorityTone = {
 } as const;
 
 export function RecommendationsPanel() {
-  const { recommendations } = useSimulatorStore();
+  const { recommendations, isAnalyzing } = useSimulatorStore();
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Design recommendations</CardTitle>
       </CardHeader>
       <CardContent>
-        {recommendations.length > 0 ? (
+        {isAnalyzing ? (
+          <div className="rounded-xl border border-[var(--border)] bg-white/55 p-4 text-sm text-[var(--muted-foreground)]">
+            Processing recommendations...
+          </div>
+        ) : recommendations.length > 0 ? (
           <div className="space-y-3">
             {recommendations.map((recommendation) => (
               <article key={recommendation.id} className="rounded-xl border border-[var(--border)] bg-white/60 p-3">
@@ -27,7 +31,8 @@ export function RecommendationsPanel() {
                   <h3 className="text-sm font-bold">{recommendation.title}</h3>
                   <Badge tone={priorityTone[recommendation.priority]}>{recommendation.priority}</Badge>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{recommendation.action}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{recommendation.rationale}</p>
+                <p className="mt-2 rounded-lg bg-[#f3ece1] p-2 text-xs font-medium leading-5">{recommendation.action}</p>
               </article>
             ))}
           </div>

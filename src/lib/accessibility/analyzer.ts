@@ -1,4 +1,6 @@
 import type { AccessibilityFinding, AccessibilityReport } from "@/lib/simulations/types";
+import { parseAnalyzeResponse } from "@/lib/validation/api-schemas";
+import { sanitizeReport } from "@/lib/validation/scorecard";
 
 type ServerImageStats = {
   width?: number;
@@ -34,9 +36,11 @@ export async function analyzeImage(file: File, imageUrl: string): Promise<Access
   const saturationVariance = variance(samples.map((sample) => sample.saturation));
   const serverStats = await getServerStats(file);
 
-  const contrastScore = scoreFromRange(localContrast, 0.06, 0.32);
+  const contrastScore = computeContrastScore(localContrast, luminances, serverStats?.tonalRange);
   const densityScore = clampScore(100 - edgeDensity * 145);
-  const readabilityScore = clampScore((contrastScore * 0.54 + densityScore * 0.34 + (100 - saturationVariance * 120) * 0.12));
+  const readabilityScore = clampScore(
+    contrastScore * 0.54 + densityScore * 0.34 + (100 - saturationVariance * 120) * 0.12
+  );
   const touchTargetScore = clampScore(100 - edgeDensity * 115 - (canvas.width < 390 ? 10 : 0));
 
   const findings = buildFindings({
@@ -51,7 +55,7 @@ export async function analyzeImage(file: File, imageUrl: string): Promise<Access
     tonalRange: serverStats?.tonalRange
   });
 
-  return {
+  return sanitizeReport({
     contrastScore,
     densityScore,
     readabilityScore,
@@ -64,7 +68,20 @@ export async function analyzeImage(file: File, imageUrl: string): Promise<Access
       averageLuminance,
       tonalRange: serverStats?.tonalRange
     }
-  };
+  });
+}
+
+function computeContrastScore(localContrast: number, luminances: number[], tonalRange?: number) {
+  const localScore = scoreFromRange(localContrast, 0.02, 0.22);
+  const varianceScore = scoreFromRange(Math.sqrt(variance(luminances)), 0.008, 0.12);
+  const tonalScore = tonalRange !== undefined ? scoreFromRange(tonalRange, 48, 220) : localScore;
+  const blended = clampScore(localScore * 0.45 + varianceScore * 0.3 + tonalScore * 0.25);
+
+  if (blended < 8 && tonalRange !== undefined && tonalRange > 40) {
+    return clampScore(Math.max(blended, tonalScore * 0.55));
+  }
+
+  return blended;
 }
 
 function buildFindings(input: {
@@ -158,7 +175,8 @@ async function getServerStats(file: File): Promise<ServerImageStats | null> {
       return null;
     }
 
-    return response.json();
+    const data = await response.json();
+    return parseAnalyzeResponse(data);
   } catch {
     return null;
   }

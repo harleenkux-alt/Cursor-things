@@ -42,6 +42,7 @@ export type AccessibilityReport = {
   densityScore: number;
   touchTargetScore: number;
   findings: AccessibilityFinding[];
+  validationWarnings?: string[];
   imageMeta: {
     width: number;
     height: number;

@@ -10,6 +10,14 @@ import type {
   SimulationId,
   SimulationResult
 } from "@/lib/simulations/types";
+import { validateSimulationOutput } from "@/lib/validation/simulation";
+import { validateUpload } from "@/lib/validation/upload";
+
+const simulationCache = new Map<string, SimulationResult>();
+
+function cacheKey(imageUrl: string, simulation: SimulationId) {
+  return `${imageUrl}:${simulation}`;
+}
 
 type UploadState = {
   file: File | null;
@@ -21,6 +29,7 @@ type UploadState = {
   isAnalyzing: boolean;
   isSimulating: boolean;
   error: string | null;
+  validationErrors: string[];
   uploadImage: (file: File) => Promise<void>;
   selectSimulation: (simulation: SimulationId) => Promise<void>;
   runSimulation: () => Promise<void>;
@@ -37,10 +46,14 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
   isAnalyzing: false,
   isSimulating: false,
   error: null,
+  validationErrors: [],
 
   async uploadImage(file) {
-    if (!file.type.startsWith("image/")) {
-      set({ error: "Upload a PNG, JPG, or WebP screenshot." });
+    set({ validationErrors: [], error: null });
+
+    const validation = await validateUpload(file);
+    if (!validation.valid) {
+      set({ validationErrors: validation.errors });
       return;
     }
 
@@ -48,6 +61,8 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
     if (previousUrl) {
       URL.revokeObjectURL(previousUrl);
     }
+
+    simulationCache.clear();
 
     const imageUrl = URL.createObjectURL(file);
     set({
@@ -57,7 +72,8 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
       report: null,
       recommendations: [],
       isAnalyzing: true,
-      error: null
+      error: null,
+      validationErrors: []
     });
 
     try {
@@ -68,10 +84,10 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
         isAnalyzing: false
       });
       await get().runSimulation();
-    } catch (error) {
+    } catch (uploadError) {
       set({
         isAnalyzing: false,
-        error: error instanceof Error ? error.message : "Unable to analyze this image."
+        error: uploadError instanceof Error ? uploadError.message : "Unable to analyze this image."
       });
     }
   },
@@ -80,7 +96,8 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
     set({
       selectedSimulation: simulation,
       result: null,
-      recommendations: createRecommendations(get().report, simulation)
+      recommendations: createRecommendations(get().report, simulation),
+      error: null
     });
 
     if (get().imageUrl) {
@@ -94,19 +111,37 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
       return;
     }
 
+    const key = cacheKey(imageUrl, selectedSimulation);
+    const cached = simulationCache.get(key);
+    if (cached) {
+      set({
+        result: cached,
+        recommendations: createRecommendations(report, selectedSimulation),
+        isSimulating: false,
+        error: null
+      });
+      return;
+    }
+
     set({ isSimulating: true, error: null });
 
     try {
       const result = await generateSimulation(imageUrl, selectedSimulation);
+      await validateSimulationOutput(imageUrl, result.dataUrl);
+      simulationCache.set(key, result);
       set({
         result,
         recommendations: createRecommendations(report, selectedSimulation),
-        isSimulating: false
+        isSimulating: false,
+        error: null
       });
-    } catch (error) {
+    } catch (simulationError) {
       set({
         isSimulating: false,
-        error: error instanceof Error ? error.message : "Unable to generate this simulation."
+        error:
+          simulationError instanceof Error
+            ? simulationError.message.replace("Simulation validation failed: ", "Simulation failed: ")
+            : "Unable to generate this simulation."
       });
     }
   },
@@ -116,6 +151,7 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
     if (previousUrl) {
       URL.revokeObjectURL(previousUrl);
     }
+    simulationCache.clear();
     set({
       file: null,
       imageUrl: null,
@@ -124,7 +160,8 @@ export const useSimulatorStore = create<UploadState>((set, get) => ({
       recommendations: [],
       isAnalyzing: false,
       isSimulating: false,
-      error: null
+      error: null,
+      validationErrors: []
     });
   }
 }));

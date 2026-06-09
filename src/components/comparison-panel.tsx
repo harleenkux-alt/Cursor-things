@@ -9,6 +9,7 @@ import { useSimulatorStore } from "@/store/use-simulator-store";
 export function ComparisonPanel() {
   const { imageUrl, selectedSimulation, result, isSimulating, error } = useSimulatorStore();
   const simulation = simulationById[selectedSimulation];
+  const showDemo = !imageUrl;
 
   const download = () => {
     if (!result) {
@@ -21,37 +22,36 @@ export function ComparisonPanel() {
     link.click();
   };
 
-  const showDemo = !imageUrl;
-
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-4">
+    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-bold">Compare</h2>
         {imageUrl && result ? (
-          <Button type="button" size="sm" variant="secondary" onClick={download}>
+          <Button type="button" size="sm" onClick={download}>
             <Download aria-hidden="true" size={15} />
-            Download
+            Download comparison
           </Button>
         ) : null}
       </div>
 
-      <div className="relative grid grid-cols-2 gap-4">
-        {/* Original panel */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-5">
         <div>
-          <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f9fafb] p-4 sm:min-h-[320px]">
+          <div className="mb-2 text-sm font-semibold text-[var(--foreground)]">Original</div>
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f3f4f6] p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <SignInMockup />
             ) : (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={imageUrl} alt="Original upload" className="max-h-[50vh] w-full object-contain" />
+              <img src={imageUrl} alt="Original upload" className="max-h-[65vh] w-full object-contain" />
             )}
           </div>
-          <p className="mt-2 text-center text-sm font-medium text-[var(--muted-foreground)]">Original</p>
         </div>
 
-        {/* Simulation panel */}
         <div>
-          <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f9fafb] p-4 sm:min-h-[320px]">
+          <div className="mb-2 text-sm font-semibold text-[var(--foreground)]">
+            {showDemo ? "Low Vision Simulation" : simulation.name}
+          </div>
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f3f4f6] p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <div style={{ filter: "blur(1.5px) contrast(0.7) brightness(0.85)" }}>
                 <SignInMockup />
@@ -61,25 +61,26 @@ export function ComparisonPanel() {
               <img
                 src={result.dataUrl}
                 alt={`${simulation.name} simulation`}
-                className="max-h-[50vh] w-full object-contain"
+                className="max-h-[65vh] w-full object-contain"
               />
             ) : (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={imageUrl!} alt="Generating simulation" className="max-h-[50vh] w-full object-contain opacity-40" />
+              <img
+                src={imageUrl!}
+                alt="Generating simulation"
+                className="max-h-[65vh] w-full object-contain opacity-30"
+              />
             )}
 
             {isSimulating ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold shadow">
+              <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-sm">
+                <div className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold shadow-md">
                   <Loader2 aria-hidden="true" className="animate-spin" size={16} />
-                  Generating...
+                  Processing simulation...
                 </div>
               </div>
             ) : null}
           </div>
-          <p className="mt-2 text-center text-sm font-medium text-[var(--muted-foreground)]">
-            {showDemo ? "Low Vision Simulation" : simulation.name}
-          </p>
         </div>
       </div>
 
