@@ -26,13 +26,13 @@ export function ReportPanel() {
   const contrast = report ? validateContrastScore(report.contrastScore, true) : null;
 
   return (
-    <Card className="h-full border-0 bg-transparent shadow-none">
+    <Card className="h-full border border-[var(--border)] bg-[var(--surface)] shadow-none">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Accessibility scorecard</CardTitle>
       </CardHeader>
       <CardContent>
         {isAnalyzing ? (
-          <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white/55 p-4 text-sm font-semibold">
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white p-4 text-sm font-semibold">
             <Loader2 aria-hidden="true" className="animate-spin" size={16} />
             Processing metrics...
           </div>
@@ -54,7 +54,7 @@ export function ReportPanel() {
               <Score label="Touch targets" value={report.touchTargetScore} />
             </div>
 
-            <div className="mt-4 rounded-xl border border-[var(--border)] bg-white/55 p-3">
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-white p-3">
               <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--muted-foreground)]">
                 <Ruler aria-hidden="true" size={14} />
                 Image metadata
@@ -70,7 +70,7 @@ export function ReportPanel() {
                 const Icon = severityIcon[finding.severity];
 
                 return (
-                  <div key={finding.id} className="rounded-xl border border-[var(--border)] bg-white/55 p-3">
+                  <div key={finding.id} className="rounded-xl border border-[var(--border)] bg-white p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex gap-2">
                         <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--primary)]" size={15} />
@@ -87,7 +87,7 @@ export function ReportPanel() {
             </div>
           </>
         ) : (
-          <div className="rounded-xl border border-[var(--border)] bg-white/55 p-4 text-sm text-[var(--muted-foreground)]">
+          <div className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
             Upload a screenshot to see contrast, density, and readability scores.
           </div>
         )}

@@ -5,7 +5,7 @@ export function SignInMockup() {
       <p className="mb-5 text-sm text-[var(--muted-foreground)]">Welcome back. Enter your details below.</p>
 
       <label className="mb-1 block text-xs font-semibold">Email address</label>
-      <div className="mb-4 h-10 rounded-xl border border-[var(--border)] bg-[var(--workspace)] px-3 py-2 text-sm text-[var(--muted-foreground)]">
+      <div className="mb-4 h-10 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--muted-foreground)]">
         you@example.com
       </div>
 

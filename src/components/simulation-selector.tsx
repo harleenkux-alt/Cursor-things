@@ -38,20 +38,18 @@ const simulationIcons: Record<SimulationId, LucideIcon> = {
 const categories: SimulationCategory[] = ["Visual", "Cognitive", "Motor"];
 
 type SimulationSelectorProps = {
-  variant?: "sidebar" | "grid";
+  variant?: "bar" | "grid";
 };
 
-export function SimulationSelector({ variant = "grid" }: SimulationSelectorProps) {
+export function SimulationSelector({ variant = "bar" }: SimulationSelectorProps) {
   const { selectedSimulation, selectSimulation, isSimulating } = useSimulatorStore();
-  const isSidebar = variant === "sidebar";
+  const isBar = variant === "bar";
 
   return (
-    <section className={cn(isSidebar ? "lg:sticky lg:top-0" : "rounded-2xl border border-[var(--border)] bg-white p-4")}>
-      <h2 className={cn("font-serif font-bold", isSidebar ? "mb-4 text-lg" : "mb-4 text-base")}>
-        Choose a simulation
-      </h2>
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+      <h2 className="font-serif mb-4 text-lg font-bold">Choose a simulation</h2>
 
-      <div className={cn(isSidebar ? "space-y-5" : "space-y-5")}>
+      <div className="space-y-4">
         {categories.map((category) => {
           const CategoryIcon = categoryIcons[category];
           const options = simulations.filter((simulation) => simulation.category === category);
@@ -62,7 +60,12 @@ export function SimulationSelector({ variant = "grid" }: SimulationSelectorProps
                 <CategoryIcon aria-hidden="true" size={14} strokeWidth={1.5} />
                 {category}
               </div>
-              <div className={cn("grid gap-2", isSidebar ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
+              <div
+                className={cn(
+                  "flex gap-2",
+                  isBar ? "overflow-x-auto pb-1" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                )}
+              >
                 {options.map((simulation) => {
                   const Icon = simulationIcons[simulation.id];
                   const isActive = selectedSimulation === simulation.id;
@@ -74,26 +77,17 @@ export function SimulationSelector({ variant = "grid" }: SimulationSelectorProps
                       disabled={isSimulating}
                       onClick={() => void selectSimulation(simulation.id)}
                       className={cn(
-                        "rounded-xl border text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60",
-                        isSidebar ? "flex items-center gap-3 p-3" : "p-4",
+                        "shrink-0 rounded-full border text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60",
+                        isBar ? "inline-flex items-center gap-2 px-4 py-2" : "rounded-xl p-4 text-left",
                         isActive
-                          ? "border-[var(--primary)] bg-white shadow-sm"
-                          : "border-transparent bg-white/60 hover:bg-white"
+                          ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                          : "border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
                       )}
                     >
-                      {isSidebar ? (
+                      {isBar ? (
                         <>
-                          <div
-                            className={cn(
-                              "shrink-0 rounded-full p-2",
-                              isActive ? "bg-[var(--primary)] text-white" : "bg-[var(--muted)] text-[var(--primary)]"
-                            )}
-                          >
-                            <Icon aria-hidden="true" size={16} strokeWidth={1.5} />
-                          </div>
-                          <div className="min-w-0 flex-1 text-sm font-semibold">
-                            {simulation.chipLabel ?? simulation.name}
-                          </div>
+                          <Icon aria-hidden="true" size={15} strokeWidth={1.5} />
+                          {simulation.chipLabel ?? simulation.name}
                         </>
                       ) : (
                         <>
@@ -101,16 +95,11 @@ export function SimulationSelector({ variant = "grid" }: SimulationSelectorProps
                             <div
                               className={cn(
                                 "rounded-full p-2",
-                                isActive ? "bg-[var(--primary)] text-white" : "bg-[var(--muted)] text-[var(--primary)]"
+                                isActive ? "bg-[var(--primary)] text-white" : "bg-[var(--muted)]"
                               )}
                             >
                               <Icon aria-hidden="true" size={18} strokeWidth={1.5} />
                             </div>
-                            {isActive ? (
-                              <span className="rounded-full bg-[var(--primary)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                                Active
-                              </span>
-                            ) : null}
                           </div>
                           <div className="font-semibold">{simulation.chipLabel ?? simulation.name}</div>
                           <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{simulation.summary}</p>

@@ -23,7 +23,7 @@ export function ComparisonPanel() {
   };
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-serif text-xl font-bold">Compare</h2>
         {imageUrl && result ? (
@@ -37,7 +37,7 @@ export function ComparisonPanel() {
       <div className="grid grid-cols-2 gap-4 sm:gap-6">
         <div>
           <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Original</div>
-          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--workspace)] p-4 sm:min-h-[420px] lg:min-h-[480px]">
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-white p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <SignInMockup />
             ) : (
@@ -51,7 +51,7 @@ export function ComparisonPanel() {
           <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
             {showDemo ? "Low Vision Simulation" : simulation.name}
           </div>
-          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--workspace)] p-4 sm:min-h-[420px] lg:min-h-[480px]">
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-white p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <div style={{ filter: "blur(1.5px) contrast(0.7) brightness(0.85)" }}>
                 <SignInMockup />

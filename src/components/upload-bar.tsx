@@ -24,7 +24,7 @@ export function UploadBar() {
   const displayErrors = validationErrors.length > 0 ? validationErrors : error ? [error] : [];
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
       <h2 className="font-serif mb-4 text-xl font-bold">Upload a screenshot</h2>
 
       <input
@@ -36,7 +36,7 @@ export function UploadBar() {
       />
 
       {file ? (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--workspace)] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-white p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm">
               <span className="font-semibold">{file.name}</span>
@@ -72,11 +72,11 @@ export function UploadBar() {
           }}
           className={`flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed py-12 transition ${
             isDragging
-              ? "border-[var(--primary)] bg-[var(--sidebar)]/30"
-              : "border-[var(--border)] bg-[var(--workspace)] hover:border-[var(--primary)]/40"
+              ? "border-[var(--primary)] bg-white"
+              : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--primary)]/40"
           }`}
         >
-          <div className="rounded-full bg-[var(--sidebar)] p-3">
+          <div className="rounded-full bg-[var(--muted)] p-3">
             <UploadCloud aria-hidden="true" size={24} strokeWidth={1.5} className="text-[var(--primary)]" />
           </div>
           <span className="text-base font-semibold">{isAnalyzing ? "Analyzing..." : "Drag & drop or click to upload"}</span>

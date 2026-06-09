@@ -2,15 +2,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fffbeb;
+  --background: #ffffff;
   --foreground: #0a0a0a;
+  --surface: #fafafa;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
-  --sidebar: #bfdbfe;
-  --sidebar-foreground: #0a0a0a;
-  --workspace: #fffbeb;
-  --muted: #dbeafe;
-  --muted-foreground: #4b5563;
+  --muted: #f0f0f0;
+  --muted-foreground: #6b7280;
   --border: #e5e7eb;
   --primary: #0a0a0a;
   --primary-foreground: #ffffff;
@@ -19,7 +17,7 @@
   --accent-foreground: #0a0a0a;
   --highlight: #fcd34d;
   --destructive: #dc2626;
-  --ring: #93c5fd;
+  --ring: #d1d5db;
   --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
@@ -48,24 +46,9 @@ select {
 }
 
 ::selection {
-  background: rgba(191, 219, 254, 0.8);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .font-serif {
   font-family: var(--font-serif);
-}
-
-.sidebar-panel {
-  background: var(--sidebar);
-}
-
-.workspace-panel {
-  background: var(--workspace);
-}
-
-.decorative-pattern {
-  background-color: var(--sidebar);
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(252, 211, 77, 0.35) 0, transparent 42%),
-    radial-gradient(circle at 90% 80%, rgba(147, 197, 253, 0.5) 0, transparent 38%);
 }
