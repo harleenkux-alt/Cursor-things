@@ -23,21 +23,21 @@ export function ComparisonPanel() {
   };
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-bold">Compare</h2>
+    <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-serif text-xl font-bold">Compare</h2>
         {imageUrl && result ? (
           <Button type="button" size="sm" onClick={download}>
-            <Download aria-hidden="true" size={15} />
+            <Download aria-hidden="true" size={15} strokeWidth={1.5} />
             Download comparison
           </Button>
         ) : null}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-5">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <div className="mb-2 text-sm font-semibold text-[var(--foreground)]">Original</div>
-          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f3f4f6] p-4 sm:min-h-[420px] lg:min-h-[480px]">
+          <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Original</div>
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--workspace)] p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <SignInMockup />
             ) : (
@@ -48,10 +48,10 @@ export function ComparisonPanel() {
         </div>
 
         <div>
-          <div className="mb-2 text-sm font-semibold text-[var(--foreground)]">
+          <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
             {showDemo ? "Low Vision Simulation" : simulation.name}
           </div>
-          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[#f3f4f6] p-4 sm:min-h-[420px] lg:min-h-[480px]">
+          <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--workspace)] p-4 sm:min-h-[420px] lg:min-h-[480px]">
             {showDemo ? (
               <div style={{ filter: "blur(1.5px) contrast(0.7) brightness(0.85)" }}>
                 <SignInMockup />
@@ -73,10 +73,10 @@ export function ComparisonPanel() {
             )}
 
             {isSimulating ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-sm">
-                <div className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold shadow-md">
+              <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+                <div className="flex items-center gap-2 rounded-full bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white">
                   <Loader2 aria-hidden="true" className="animate-spin" size={16} />
-                  Processing simulation...
+                  Processing...
                 </div>
               </div>
             ) : null}
@@ -85,7 +85,7 @@ export function ComparisonPanel() {
       </div>
 
       {showDemo ? (
-        <p className="mt-4 text-center text-sm text-[var(--muted-foreground)]">
+        <p className="mt-5 text-center text-sm text-[var(--muted-foreground)]">
           Example: how a sign-in form appears to someone with low vision. Upload your own design above to test it.
         </p>
       ) : null}

@@ -24,8 +24,8 @@ export function UploadBar() {
   const displayErrors = validationErrors.length > 0 ? validationErrors : error ? [error] : [];
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white/70 p-5">
-      <h2 className="mb-3 text-base font-bold">Upload a screenshot</h2>
+    <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <h2 className="font-serif mb-4 text-xl font-bold">Upload a screenshot</h2>
 
       <input
         ref={inputRef}
@@ -36,7 +36,7 @@ export function UploadBar() {
       />
 
       {file ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--workspace)] p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm">
               <span className="font-semibold">{file.name}</span>
@@ -70,20 +70,22 @@ export function UploadBar() {
             setIsDragging(false);
             void handleFile(event.dataTransfer.files[0]);
           }}
-          className={`flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-10 transition ${
+          className={`flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed py-12 transition ${
             isDragging
-              ? "border-[var(--accent)] bg-[#fdf6ef]"
-              : "border-[var(--border)] bg-white hover:bg-[#fdf6ef]"
+              ? "border-[var(--primary)] bg-[var(--sidebar)]/30"
+              : "border-[var(--border)] bg-[var(--workspace)] hover:border-[var(--primary)]/40"
           }`}
         >
-          <UploadCloud aria-hidden="true" size={28} className="text-[var(--primary)]" />
-          <span className="text-base font-bold">{isAnalyzing ? "Analyzing..." : "Drag & drop or click to upload"}</span>
+          <div className="rounded-full bg-[var(--sidebar)] p-3">
+            <UploadCloud aria-hidden="true" size={24} strokeWidth={1.5} className="text-[var(--primary)]" />
+          </div>
+          <span className="text-base font-semibold">{isAnalyzing ? "Analyzing..." : "Drag & drop or click to upload"}</span>
           <span className="text-xs text-[var(--muted-foreground)]">PNG, JPEG, WebP · max 10MB · 320×240 to 4000×4000px</span>
         </button>
       )}
 
       {displayErrors.length > 0 ? (
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-2">
           {displayErrors.map((message) => (
             <div
               key={message}

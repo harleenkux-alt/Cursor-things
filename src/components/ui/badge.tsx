@@ -6,10 +6,10 @@ type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 };
 
 const tones: Record<NonNullable<BadgeProps["tone"]>, string> = {
-  neutral: "border-[var(--border)] bg-white/70 text-[var(--foreground)]",
-  good: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  warn: "border-amber-200 bg-amber-50 text-amber-800",
-  risk: "border-red-200 bg-red-50 text-red-800"
+  neutral: "border-[var(--border)] bg-white text-[var(--foreground)]",
+  good: "border-[#86efac] bg-[#dcfce7] text-[#166534]",
+  warn: "border-[#fcd34d] bg-[var(--accent-soft)] text-[#92400e]",
+  risk: "border-[#fca5a5] bg-[#fee2e2] text-[#991b1b]"
 };
 
 export function Badge({ className, tone = "neutral", ...props }: BadgeProps) {

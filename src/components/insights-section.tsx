@@ -3,11 +3,17 @@
 import { RecommendationsPanel } from "@/components/recommendations-panel";
 import { ReportPanel } from "@/components/report-panel";
 
-export function InsightsSection() {
+type InsightsSectionProps = {
+  variant?: "default" | "sidebar";
+};
+
+export function InsightsSection({ variant = "default" }: InsightsSectionProps) {
+  const isSidebar = variant === "sidebar";
+
   return (
     <section>
-      <h2 className="mb-4 text-base font-bold">Insights</h2>
-      <div className="grid gap-4 md:grid-cols-2 md:items-start">
+      {!isSidebar ? <h2 className="font-serif mb-4 text-xl font-bold">Insights</h2> : null}
+      <div className={isSidebar ? "space-y-4" : "grid gap-5 md:grid-cols-2 md:items-start"}>
         <ReportPanel />
         <RecommendationsPanel />
       </div>

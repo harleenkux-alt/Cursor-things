@@ -26,7 +26,7 @@ export function ReportPanel() {
   const contrast = report ? validateContrastScore(report.contrastScore, true) : null;
 
   return (
-    <Card className="h-full">
+    <Card className="h-full border-0 bg-transparent shadow-none">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Accessibility scorecard</CardTitle>
       </CardHeader>
@@ -108,10 +108,10 @@ function Score({ label, value, error }: { label: string; value: number; error?: 
   }
 
   const rounded = Math.round(value);
-  const tone = rounded >= 76 ? "bg-emerald-500" : rounded >= 58 ? "bg-amber-500" : "bg-red-500";
+  const tone = rounded >= 76 ? "bg-[var(--primary)]" : rounded >= 58 ? "bg-[var(--highlight)]" : "bg-red-500";
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-white/60 p-3">
+    <div className="rounded-xl border border-[var(--border)] bg-white p-3">
       <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">{label}</div>
       <div className="mt-1 text-2xl font-black">{rounded}</div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--muted)]">

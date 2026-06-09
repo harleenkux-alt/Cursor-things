@@ -13,22 +13,28 @@ export function SimulatorWorkspace() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto max-w-6xl space-y-6 px-5 py-6 sm:px-8">
+      <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
         <UploadBar />
 
         {imageUrl ? (
-          <div className="grid gap-6 lg:grid-cols-[17rem_1fr]">
-            <aside>
+          <div className="mt-8 grid gap-5 lg:grid-cols-[16rem_minmax(0,1fr)_22rem]">
+            <aside className="decorative-pattern rounded-2xl p-4 lg:sticky lg:top-6 lg:self-start">
               <SimulationSelector variant="sidebar" />
             </aside>
-            <div className="min-w-0 space-y-6">
+
+            <div className="workspace-panel min-w-0 rounded-2xl p-1">
               <ComparisonPanel />
-              <InsightsSection />
             </div>
+
+            <aside className="decorative-pattern space-y-5 rounded-2xl p-4 lg:sticky lg:top-6 lg:self-start">
+              <InsightsSection variant="sidebar" />
+            </aside>
           </div>
         ) : (
-          <div className="space-y-6">
-            <ComparisonPanel />
+          <div className="mt-8 space-y-8">
+            <div className="workspace-panel rounded-2xl">
+              <ComparisonPanel />
+            </div>
             <InsightsSection />
           </div>
         )}
