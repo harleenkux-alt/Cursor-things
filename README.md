@@ -18,6 +18,18 @@ Instead of telling designers *"This text contrast is poor,"* the tool lets them 
 - Design recommendations tied to the selected simulation
 - Downloadable simulation output
 
+## Figma plugin
+
+Select a frame in Figma and run the same simulations inside the editor.
+
+```bash
+npm run figma:build
+```
+
+Then in Figma Desktop: **Plugins → Development → Import plugin from manifest…** → choose `figma-plugin/dist/manifest.json`.
+
+See [figma-plugin/README.md](figma-plugin/README.md) for full instructions.
+
 ## Tech stack
 
 | Layer | Technology |
