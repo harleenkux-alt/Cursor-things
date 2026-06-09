@@ -1,0 +1,9 @@
+{
+  "name": "Inclusive Design Simulator",
+  "id": "inclusive-design-simulator-2026",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}
