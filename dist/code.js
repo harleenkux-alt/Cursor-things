@@ -297,7 +297,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     await Promise.all(fonts.map((f) => figma.loadFontAsync(f)));
   }
   const SETTINGS_KEY = "inclusive-audit:settings";
-  const UI_SIZE = { width: 460, height: 720 };
+  const UI_SIZE = { width: 880, height: 720 };
   figma.showUI(__html__, __spreadProps(__spreadValues({}, UI_SIZE), { themeColors: true }));
   function post(message) {
     figma.ui.postMessage(message);
@@ -351,6 +351,45 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       });
     }
   }
+  const MAX_PREVIEW_DIMENSION = 1400;
+  async function runSimulation() {
+    var _a, _b, _c, _d;
+    const selection = figma.currentPage.selection;
+    const frame = selection.find(isFrameLike);
+    if (!frame) {
+      post({ type: "analysis-error", message: "Select a frame to begin." });
+      return;
+    }
+    post({ type: "analysis-started" });
+    post({ type: "analysis-progress", message: "Reading layers…", percent: 15 });
+    await new Promise((r) => setTimeout(r, 0));
+    try {
+      const snapshot = extractSnapshot(frame);
+      post({ type: "analysis-progress", message: "Rendering preview…", percent: 55 });
+      const box = "absoluteBoundingBox" in frame ? frame.absoluteBoundingBox : null;
+      const maxDim = Math.max((_a = box == null ? void 0 : box.width) != null ? _a : frame.width, (_b = box == null ? void 0 : box.height) != null ? _b : frame.height, 1);
+      const scale = Math.max(0.25, Math.min(2, MAX_PREVIEW_DIMENSION / maxDim));
+      const bytes = await frame.exportAsync({
+        format: "PNG",
+        constraint: { type: "SCALE", value: scale }
+      });
+      post({
+        type: "simulation-ready",
+        snapshot,
+        image: {
+          bytes,
+          width: Math.round(((_c = box == null ? void 0 : box.width) != null ? _c : frame.width) * scale),
+          height: Math.round(((_d = box == null ? void 0 : box.height) != null ? _d : frame.height) * scale),
+          scale
+        }
+      });
+    } catch (err) {
+      post({
+        type: "analysis-error",
+        message: err instanceof Error ? err.message : "Failed to render the frame."
+      });
+    }
+  }
   figma.on("selectionchange", emitSelection);
   figma.ui.onmessage = async (msg) => {
     var _a;
@@ -366,6 +405,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         break;
       case "analyze":
         await runAnalysis();
+        break;
+      case "run-simulation":
+        await runSimulation();
         break;
       case "locate":
         await locateNodes(msg.nodeIds);
