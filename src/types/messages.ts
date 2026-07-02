@@ -1,6 +1,7 @@
 import type { SceneSnapshot } from '@/models/auditNode';
 import type { AuditSettings } from '@/types/settings';
 import type { FixSuggestion } from '@/types/analysis';
+import type { FrameImage } from '@/types/experience';
 
 /**
  * Typed message protocol between the UI (iframe) and the main thread (sandbox).
@@ -12,6 +13,7 @@ import type { FixSuggestion } from '@/types/analysis';
 export type UiToMainMessage =
   | { type: 'ui-ready' }
   | { type: 'analyze' }
+  | { type: 'run-simulation' }
   | { type: 'request-selection' }
   | { type: 'locate'; nodeIds: string[] }
   | { type: 'apply-fix'; fix: FixSuggestion }
@@ -32,6 +34,7 @@ export type MainToUiMessage =
   | { type: 'analysis-started' }
   | { type: 'analysis-progress'; message: string; percent: number }
   | { type: 'snapshot-ready'; snapshot: SceneSnapshot }
+  | { type: 'simulation-ready'; snapshot: SceneSnapshot; image: FrameImage }
   | { type: 'analysis-error'; message: string }
   | { type: 'settings-loaded'; settings: AuditSettings }
   | { type: 'fix-applied'; nodeId?: string; ok: boolean; message?: string };

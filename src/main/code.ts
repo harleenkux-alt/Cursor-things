@@ -19,7 +19,7 @@ import { applyFix, locateNodes } from './commands';
  */
 
 const SETTINGS_KEY = 'inclusive-audit:settings';
-const UI_SIZE = { width: 460, height: 720 };
+const UI_SIZE = { width: 880, height: 720 };
 
 figma.showUI(__html__, { ...UI_SIZE, themeColors: true });
 
@@ -93,6 +93,51 @@ async function runAnalysis(): Promise<void> {
   }
 }
 
+/** Cap the exported preview so canvas simulations stay fast (<100ms). */
+const MAX_PREVIEW_DIMENSION = 1400;
+
+async function runSimulation(): Promise<void> {
+  const selection = figma.currentPage.selection;
+  const frame = selection.find(isFrameLike);
+  if (!frame) {
+    post({ type: 'analysis-error', message: 'Select a frame to begin.' });
+    return;
+  }
+  post({ type: 'analysis-started' });
+  post({ type: 'analysis-progress', message: 'Reading layers…', percent: 15 });
+  await new Promise((r) => setTimeout(r, 0));
+
+  try {
+    const snapshot = extractSnapshot(frame);
+    post({ type: 'analysis-progress', message: 'Rendering preview…', percent: 55 });
+
+    const box = 'absoluteBoundingBox' in frame ? frame.absoluteBoundingBox : null;
+    const maxDim = Math.max(box?.width ?? frame.width, box?.height ?? frame.height, 1);
+    const scale = Math.max(0.25, Math.min(2, MAX_PREVIEW_DIMENSION / maxDim));
+
+    const bytes = await (frame as ExportMixin).exportAsync({
+      format: 'PNG',
+      constraint: { type: 'SCALE', value: scale },
+    });
+
+    post({
+      type: 'simulation-ready',
+      snapshot,
+      image: {
+        bytes,
+        width: Math.round((box?.width ?? frame.width) * scale),
+        height: Math.round((box?.height ?? frame.height) * scale),
+        scale,
+      },
+    });
+  } catch (err) {
+    post({
+      type: 'analysis-error',
+      message: err instanceof Error ? err.message : 'Failed to render the frame.',
+    });
+  }
+}
+
 figma.on('selectionchange', emitSelection);
 
 figma.ui.onmessage = async (msg: UiToMainMessage) => {
@@ -108,6 +153,9 @@ figma.ui.onmessage = async (msg: UiToMainMessage) => {
       break;
     case 'analyze':
       await runAnalysis();
+      break;
+    case 'run-simulation':
+      await runSimulation();
       break;
     case 'locate':
       await locateNodes(msg.nodeIds);
