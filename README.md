@@ -17,6 +17,40 @@ whole design system.
 
 ## Features
 
+### Experience Accessibility (disability & accessibility simulator)
+
+Preview how users with different accessibility needs may experience a design.
+Select a frame → **Run Accessibility Simulation** → explore tabs:
+
+- **Visual** — live, side-by-side Original vs Simulation rendered on an in-plugin
+  canvas (the Figma design is never modified). Simulate Low Vision, Cataracts,
+  Glaucoma, Macular Degeneration, Tunnel Vision, Diabetic Retinopathy, Retinitis
+  Pigmentosa, Blurred Vision, Reduced Contrast — plus **8 color-vision
+  deficiencies** (protan/deutan/tritan -opia & -omaly, achromatopsia,
+  achromatomaly) using accepted transformation matrices. Zoom 100–300%, key
+  color-pair pass/warning/fail checks, and a non-destructive dyslexia-friendly
+  type preview.
+- **Motor** — touch-target size, control spacing, and complex/hover/drag gesture
+  reliance with pass/warning/fail per control.
+- **Hearing** — detects video/audio/notification elements and flags missing
+  captions/transcripts/visual feedback.
+- **Screen Reader** — simulated reading order with inferred role + accessible
+  name; Previous/Next steps through elements and selects the matching Figma node.
+- **Keyboard** — derived tab/focus order with highlight path; flags hover-only
+  controls, tiny targets, and potential focus traps.
+- **Cognitive** — heuristic (not a disability simulation) of reading level,
+  reading time, density, primary/secondary actions, navigation/form complexity,
+  cognitive load, and distraction.
+- **Motion** — parallax, flashing, loops, and large/auto transitions with
+  reduced-motion recommendations.
+- **Summary** — an Accessibility Experience Score with a radar chart across all
+  categories, issue count, and top recommendations.
+
+> Simulations are clearly labeled as **educational approximations** — the plugin
+> never claims to replicate an individual's real experience.
+
+### Accessibility Audit
+
 - **Overall score, grade & progress ring** with per-category breakdown.
 - **11 analyzers**: Contrast, Color System, Typography, Spacing & Grid, Layout &
   Structure, Components, Interaction, Motion, Inclusive Language, Cognitive Load,
@@ -69,19 +103,33 @@ Figma instance, and keeps the sandbox thin.
 
 ```
 src/
-  main/         Figma sandbox: entry, node extractor, imperative commands
+  main/         Figma sandbox: entry, node extractor, frame export, commands
   models/       Domain models (AuditNode snapshot, Severity)
-  types/        Shared types: analysis results, messages, settings
+  types/        Shared types: analysis, experience, messages, settings
   utils/        Pure helpers: color/WCAG math, readability, geometry
-  analyzers/    One file per analyzer + base contract + registry
+  analyzers/    One file per audit analyzer + base contract + registry
+  simulations/  Experience engine: color matrices, canvas renderer, and the
+                visual/color/motor/hearing/screen-reader/keyboard/cognitive/
+                motion modules + summary generator
   core/         Orchestration: analysisRunner, scorer, reportGenerator
   services/     figmaBridge, exportService, ai/ (future-ready)
   store/        Zustand store (app state + message handling)
   hooks/        Selector hooks
-  components/   UI primitives + home / analyzing / result / settings screens
+  components/   UI primitives, shell/nav, dashboard, audit, experience, settings
   ui/           React entry (main.tsx, App.tsx, ui.html, index.css)
   test/         Test factories
 ```
+
+### Simulation architecture
+
+The sandbox exports the selected frame as a PNG (capped to keep rendering fast)
+and sends it plus the scene snapshot to the UI. Visual/CVD simulations are pure
+canvas image processing (`simulations/canvas.ts` + `colorMatrices.ts`) applied
+only inside the plugin preview — the design is never altered. The non-visual
+modules (motor, hearing, screen reader, keyboard, cognitive, motion) are pure
+functions over the snapshot, orchestrated by the **SimulationEngine** and
+aggregated by the **SummaryGenerator**. Each module is independent and reusable,
+mirroring the audit analyzers' open/closed design.
 
 ### The analyzer contract
 
