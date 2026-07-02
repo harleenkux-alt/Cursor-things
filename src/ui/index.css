@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens. Poppins is the intended brand typeface; because Figma plugins
+ * run with no network access we fall back gracefully to the system UI stack if
+ * Poppins is not installed locally.
+ */
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e8edf3;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --ring: rgba(0, 95, 204, 0.35);
+}
+
+.dark {
+  --bg: #0b1220;
+  --surface: #121a2b;
+  --border: #223049;
+  --text: #e6ecf5;
+  --text-muted: #94a3b8;
+  --ring: rgba(91, 141, 239, 0.4);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Thin, modern scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer utilities {
+  .surface {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+}
