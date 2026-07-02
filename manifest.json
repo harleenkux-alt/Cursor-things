@@ -1,0 +1,15 @@
+{
+  "name": "Inclusive Audit",
+  "id": "inclusive-audit-plugin",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma", "figjam"],
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "Inclusive Audit runs fully offline. All analysis happens locally inside the plugin."
+  }
+}
