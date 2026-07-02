@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
-import { useProgress } from '@/hooks/useAudit';
+import { useProgress, useStatus } from '@/hooks/useAudit';
 import { Icon } from '@/components/ui/Icon';
 
 export function AnalyzingScreen() {
   const progress = useProgress();
+  const status = useStatus();
+  const title =
+    status === 'simulating' ? 'Building accessibility simulations' : 'Auditing your screen';
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-10 text-center">
@@ -15,7 +18,7 @@ export function AnalyzingScreen() {
         <Icon name="ScanLine" size={30} />
       </motion.div>
 
-      <h2 className="text-lg font-semibold">Auditing your screen</h2>
+      <h2 className="text-lg font-semibold">{title}</h2>
       <p className="mt-1 text-sm text-muted">{progress.message || 'Working…'}</p>
 
       <div className="mt-6 h-2 w-full max-w-xs overflow-hidden rounded-full bg-[var(--border)]">

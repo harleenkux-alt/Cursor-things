@@ -1,8 +1,6 @@
 import { useAuditStore } from '@/store/useAuditStore';
 import { useSettings } from '@/hooks/useAudit';
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Icon } from '@/components/ui/Icon';
 import { Switch } from '@/components/ui/Switch';
 import { Select } from '@/components/ui/Select';
 import { Slider } from '@/components/ui/Slider';
@@ -31,18 +29,14 @@ function Row({
 export function SettingsScreen() {
   const settings = useSettings();
   const update = useAuditStore((s) => s.updateSettings);
-  const close = useAuditStore((s) => s.closeSettings);
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
-        <Button variant="ghost" size="sm" onClick={close} aria-label="Back">
-          <Icon name="ChevronDown" size={16} className="rotate-90" />
-        </Button>
+      <header className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3">
         <h2 className="text-sm font-semibold">Settings</h2>
       </header>
 
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+      <div className="mx-auto min-h-0 w-full max-w-2xl flex-1 space-y-4 overflow-y-auto p-4">
         <div>
           <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wide text-muted">
             Conformance
