@@ -3,43 +3,57 @@ import type { AuditReport, FixSuggestion } from '@/types/analysis';
 import type { SelectionState } from '@/types/messages';
 import type { AuditSettings } from '@/types/settings';
 import { DEFAULT_SETTINGS } from '@/types/settings';
+import type { ExperienceReport, FrameImage } from '@/types/experience';
 import { runAnalysis, type RunProgress } from '@/core/analysisRunner';
+import { runExperienceAnalysis } from '@/simulations';
 import { bridge } from '@/services/figmaBridge';
 
-export type View = 'home' | 'analyzing' | 'result' | 'settings';
+/** Top-level navigation destinations. */
+export type Nav =
+  | 'dashboard'
+  | 'audit'
+  | 'experience'
+  | 'colors'
+  | 'reports'
+  | 'settings';
+
+/** What (if anything) is currently being computed. */
+export type FlowStatus = 'idle' | 'auditing' | 'simulating';
 
 interface AuditState {
-  view: View;
+  nav: Nav;
+  status: FlowStatus;
   selection: SelectionState;
   settings: AuditSettings;
   report: AuditReport | null;
+  experience: ExperienceReport | null;
+  frameImage: FrameImage | null;
   error: string | null;
   progress: { message: string; percent: number };
   expandedSections: Record<string, boolean>;
-  activeFixId: string | null;
 
   // actions
   init: () => void;
+  setNav: (nav: Nav) => void;
   analyze: () => void;
-  goHome: () => void;
-  openSettings: () => void;
-  closeSettings: () => void;
+  runSimulation: () => void;
   updateSettings: (patch: Partial<AuditSettings>) => void;
   toggleSection: (id: string) => void;
   locate: (nodeIds: string[]) => void;
   applyFix: (fix: FixSuggestion) => void;
-  setActiveFix: (id: string | null) => void;
 }
 
 export const useAuditStore = create<AuditState>((set, get) => ({
-  view: 'home',
+  nav: 'dashboard',
+  status: 'idle',
   selection: { hasFrame: false, selectionCount: 0 },
   settings: DEFAULT_SETTINGS,
   report: null,
+  experience: null,
+  frameImage: null,
   error: null,
   progress: { message: '', percent: 0 },
   expandedSections: {},
-  activeFixId: null,
 
   init: () => {
     bridge.subscribe(async (msg) => {
@@ -52,13 +66,13 @@ export const useAuditStore = create<AuditState>((set, get) => ({
           applyTheme(get().settings.darkMode);
           break;
         case 'analysis-started':
-          set({ view: 'analyzing', error: null, progress: { message: 'Preparing…', percent: 10 } });
+          set({ error: null, progress: { message: 'Preparing…', percent: 10 } });
           break;
         case 'analysis-progress':
           set({ progress: { message: msg.message, percent: msg.percent } });
           break;
         case 'analysis-error':
-          set({ error: msg.message, view: 'home' });
+          set({ error: msg.message, status: 'idle' });
           break;
         case 'snapshot-ready': {
           set({ progress: { message: 'Running analyzers…', percent: 75 } });
@@ -73,22 +87,47 @@ export const useAuditStore = create<AuditState>((set, get) => ({
                   },
                 }),
             });
-            set({ report, view: 'result', progress: { message: 'Done', percent: 100 } });
+            set({
+              report,
+              status: 'idle',
+              nav: 'audit',
+              progress: { message: 'Done', percent: 100 },
+            });
           } catch (err) {
             set({
               error: err instanceof Error ? err.message : 'Analysis failed.',
-              view: 'home',
+              status: 'idle',
+            });
+          }
+          break;
+        }
+        case 'simulation-ready': {
+          set({ progress: { message: 'Building simulations…', percent: 85 } });
+          try {
+            const experience = runExperienceAnalysis(msg.snapshot, get().settings);
+            set({
+              experience,
+              frameImage: msg.image,
+              status: 'idle',
+              nav: 'experience',
+              progress: { message: 'Done', percent: 100 },
+            });
+          } catch (err) {
+            set({
+              error: err instanceof Error ? err.message : 'Simulation failed.',
+              status: 'idle',
             });
           }
           break;
         }
         case 'fix-applied':
-          // Re-run is left to the user; we surface the toast via main thread.
           break;
       }
     });
     bridge.post({ type: 'ui-ready' });
   },
+
+  setNav: (nav) => set({ nav, error: null }),
 
   analyze: () => {
     const { selection } = get();
@@ -96,13 +135,23 @@ export const useAuditStore = create<AuditState>((set, get) => ({
       set({ error: 'Select a frame to begin.' });
       return;
     }
-    set({ error: null });
+    set({ error: null, status: 'auditing', progress: { message: 'Preparing…', percent: 5 } });
     bridge.post({ type: 'analyze' });
   },
 
-  goHome: () => set({ view: 'home' }),
-  openSettings: () => set({ view: 'settings' }),
-  closeSettings: () => set((s) => ({ view: s.report ? 'result' : 'home' })),
+  runSimulation: () => {
+    const { selection } = get();
+    if (!selection.hasFrame) {
+      set({ error: 'Select a frame to begin.' });
+      return;
+    }
+    set({
+      error: null,
+      status: 'simulating',
+      progress: { message: 'Preparing…', percent: 5 },
+    });
+    bridge.post({ type: 'run-simulation' });
+  },
 
   updateSettings: (patch) => {
     const settings = { ...get().settings, ...patch };
@@ -122,8 +171,6 @@ export const useAuditStore = create<AuditState>((set, get) => ({
   },
 
   applyFix: (fix) => bridge.post({ type: 'apply-fix', fix }),
-
-  setActiveFix: (id) => set({ activeFixId: id }),
 }));
 
 function applyTheme(dark: boolean): void {
