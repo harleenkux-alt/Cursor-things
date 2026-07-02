@@ -15,6 +15,7 @@ import {
   VISUAL_CONDITION_ORDER,
 } from '@/simulations';
 import { CanvasPreview } from './CanvasPreview';
+import { VisualGallery } from './VisualGallery';
 import { useLoadedImage } from './useLoadedImage';
 import { SidePanel } from './SidePanel';
 import { SimStatusPill } from './SimStatusPill';
@@ -50,6 +51,7 @@ export function VisualTab({
   const [zoom, setZoom] = useState(1);
   const [renderMs, setRenderMs] = useState(0);
   const [dyslexia, setDyslexia] = useState<DyslexiaSettings>(DEFAULT_DYSLEXIA);
+  const [mode, setMode] = useState<'compare' | 'gallery'>('compare');
 
   const condition: VisualConditionId | undefined = isCvd(active) ? 'normal' : active;
   const cvd: CvdType | undefined = isCvd(active) ? active : undefined;
@@ -61,7 +63,42 @@ export function VisualTab({
   }, [active]);
 
   return (
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[190px_1fr_230px]">
+    <div className="space-y-3">
+      {/* Toolbar: view mode toggle */}
+      <div className="flex items-center gap-2">
+        <div className="flex gap-1 rounded-lg bg-[var(--border)]/50 p-1">
+          <ModeButton active={mode === 'compare'} onClick={() => setMode('compare')} icon="Contrast">
+            Compare
+          </ModeButton>
+          <ModeButton active={mode === 'gallery'} onClick={() => setMode('gallery')} icon="LayoutDashboard">
+            Gallery
+          </ModeButton>
+        </div>
+        <span className="text-[11px] text-muted">
+          {mode === 'gallery'
+            ? 'How this screen looks across visual impairments — click any to inspect.'
+            : 'Original vs a single simulation, side by side.'}
+        </span>
+      </div>
+
+      {mode === 'gallery' ? (
+        image ? (
+          <VisualGallery
+            image={image}
+            frameImage={frameImage}
+            active={active}
+            onSelect={(id) => {
+              setActive(id);
+              setMode('compare');
+            }}
+          />
+        ) : (
+          <div className="flex h-40 items-center justify-center text-sm text-muted">
+            Decoding preview…
+          </div>
+        )
+      ) : (
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[190px_1fr_230px]">
       {/* Left: simulation selector */}
       <div className="space-y-3">
         <Selector
@@ -163,7 +200,36 @@ export function VisualTab({
           )}
         </SidePanel>
       </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function ModeButton({
+  active,
+  onClick,
+  icon,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: string;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+        active
+          ? 'bg-[var(--surface)] text-[var(--text)] shadow-soft'
+          : 'text-muted hover:text-[var(--text)]',
+      )}
+    >
+      <Icon name={icon} size={13} />
+      {children}
+    </button>
   );
 }
 
