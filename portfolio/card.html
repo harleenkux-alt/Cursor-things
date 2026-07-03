@@ -1,0 +1,41 @@
+<!--
+  Portfolio card for "Inclusive Audit".
+  Drop this anchor into your portfolio grid. Clicking it opens the case study
+  (portfolio/inclusive-audit.html). Adjust the href to match your routing.
+-->
+<a class="ia-card" href="./inclusive-audit.html" aria-label="Open the Inclusive Audit case study">
+  <div class="ia-card__media">
+    <img src="./assets/poster.jpg" alt="Inclusive Audit — Figma accessibility plugin" loading="lazy" />
+    <span class="ia-card__play" aria-hidden="true">▶</span>
+  </div>
+  <div class="ia-card__body">
+    <span class="ia-card__eyebrow">Figma Plugin · Accessibility</span>
+    <h3 class="ia-card__title">Inclusive Audit</h3>
+    <p class="ia-card__desc">
+      An accessibility auditor and disability experience simulator built into Figma.
+    </p>
+    <span class="ia-card__cta">View case study →</span>
+  </div>
+</a>
+
+<style>
+  .ia-card {
+    display: block; text-decoration: none; color: #0f172a; background: #fff;
+    border: 1px solid #e8edf3; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15,23,42,.05); transition: transform .18s ease, box-shadow .18s ease;
+    max-width: 380px; font-family: "Poppins", system-ui, sans-serif;
+  }
+  .ia-card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(15,23,42,.14); }
+  .ia-card__media { position: relative; aspect-ratio: 16 / 9; background: #0b1220; }
+  .ia-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ia-card__play {
+    position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 999px;
+    display: grid; place-items: center; background: rgba(0,95,204,.92); color: #fff; font-size: 18px;
+    box-shadow: 0 8px 24px rgba(0,95,204,.4);
+  }
+  .ia-card__body { padding: 18px 20px 20px; }
+  .ia-card__eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #005fcc; }
+  .ia-card__title { margin: 8px 0 4px; font-size: 20px; }
+  .ia-card__desc { margin: 0 0 12px; font-size: 14px; color: #64748b; line-height: 1.5; }
+  .ia-card__cta { font-size: 14px; font-weight: 600; color: #005fcc; }
+</style>

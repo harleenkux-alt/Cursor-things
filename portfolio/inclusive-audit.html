@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inclusive Audit — Case Study</title>
+    <meta
+      name="description"
+      content="Inclusive Audit is a Figma plugin that audits any frame for accessibility and lets designers experience their UI through different visual, motor, and cognitive needs."
+    />
+    <!-- Open Graph for when the portfolio card links here -->
+    <meta property="og:title" content="Inclusive Audit — Figma accessibility & experience simulator" />
+    <meta property="og:description" content="A professional accessibility auditor and disability experience simulator for Figma." />
+    <meta property="og:image" content="./assets/poster.jpg" />
+    <meta property="og:type" content="website" />
+    <style>
+      :root {
+        --brand: #005fcc;
+        --accent: #5b8def;
+        --bg: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --surface: #ffffff;
+        --border: #e8edf3;
+        --radius: 16px;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--brand); }
+      .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+      .eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--brand); background: #eaf2ff; padding: 6px 12px; border-radius: 999px;
+      }
+
+      /* Hero */
+      header.hero {
+        background: radial-gradient(1200px 600px at 80% -10%, #dbe8ff 0%, transparent 60%),
+          linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+        border-bottom: 1px solid var(--border);
+        padding: 72px 0 40px;
+      }
+      .hero h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.05; margin: 18px 0 12px; letter-spacing: -0.02em; }
+      .hero p.lede { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); max-width: 640px; margin: 0 0 24px; }
+      .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+        font-weight: 600; font-size: 15px; padding: 12px 20px; border-radius: 12px; transition: all .15s ease;
+      }
+      .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 6px 20px rgba(0,95,204,.28); }
+      .btn-primary:hover { background: #004ba3; transform: translateY(-1px); }
+      .btn-ghost { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+      .btn-ghost:hover { border-color: var(--accent); }
+      .meta { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 32px; color: var(--muted); font-size: 14px; }
+      .meta b { color: var(--ink); display: block; font-size: 13px; }
+
+      /* Video */
+      .video-shell {
+        margin: 40px 0 8px; border-radius: var(--radius); overflow: hidden;
+        border: 1px solid var(--border); box-shadow: 0 24px 60px rgba(15,23,42,.12); background: #0b1220;
+      }
+      .video-shell video { display: block; width: 100%; height: auto; }
+      .caption { text-align: center; color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+
+      section { padding: 56px 0; }
+      section h2 { font-size: 28px; letter-spacing: -0.01em; margin: 0 0 8px; }
+      section .sub { color: var(--muted); max-width: 680px; margin: 0 0 28px; }
+
+      .grid { display: grid; gap: 18px; }
+      .cols-2 { grid-template-columns: repeat(2, 1fr); }
+      .cols-3 { grid-template-columns: repeat(3, 1fr); }
+      @media (max-width: 760px) { .cols-2, .cols-3 { grid-template-columns: 1fr; } }
+
+      .card {
+        background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+        box-shadow: 0 1px 2px rgba(15,23,42,.04);
+      }
+      .card h3 { margin: 0 0 6px; font-size: 17px; }
+      .card p { margin: 0; color: var(--muted); font-size: 14px; }
+      .icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: #eaf2ff; color: var(--brand); font-size: 20px; margin-bottom: 14px; }
+
+      .pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      @media (max-width: 760px) { .pillars { grid-template-columns: 1fr; } }
+      .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .pillar img { width: 100%; display: block; border-bottom: 1px solid var(--border); }
+      .pillar .body { padding: 20px 22px 24px; }
+      .pillar h3 { margin: 0 0 6px; font-size: 18px; }
+      .pillar p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+      .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+      .tag { font-size: 11px; font-weight: 600; color: var(--brand); background: #eaf2ff; padding: 4px 9px; border-radius: 999px; }
+
+      .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+      .shots figure { margin: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+      .shots img { width: 100%; display: block; }
+      .shots figcaption { font-size: 12px; color: var(--muted); padding: 10px 12px; border-top: 1px solid var(--border); }
+
+      .stack { display: flex; flex-wrap: wrap; gap: 10px; }
+      .chip { font-size: 13px; font-weight: 500; background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
+
+      .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+      .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+      .stat .n { font-size: 30px; font-weight: 800; color: var(--brand); }
+      .stat .l { font-size: 12px; color: var(--muted); }
+
+      .note { background: #fff9ec; border: 1px solid #f6dfae; color: #7a5a12; border-radius: 12px; padding: 14px 18px; font-size: 14px; }
+      footer { border-top: 1px solid var(--border); padding: 40px 0 64px; color: var(--muted); font-size: 14px; }
+      footer a { font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <span class="eyebrow">Figma Plugin · Accessibility · Product Design</span>
+        <h1>Inclusive Audit</h1>
+        <p class="lede">
+          A professional accessibility auditor <em>and</em> a disability &amp; accessibility
+          experience simulator — built right into Figma. Designers get an accessibility score,
+          actionable fixes, and can preview how real people with different visual, motor, and
+          cognitive needs experience their screens.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#demo">▶ Watch the demo</a>
+          <a class="btn btn-ghost" href="#features">Explore features</a>
+        </div>
+        <div class="meta">
+          <div><b>Role</b> Design engineer · end-to-end</div>
+          <div><b>Platform</b> Figma Plugin API</div>
+          <div><b>Stack</b> TypeScript · React · Vite</div>
+          <div><b>Focus</b> WCAG 2.1 / 2.2 · Inclusive design</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap" id="demo">
+      <div class="video-shell">
+        <video controls playsinline muted poster="./assets/poster.jpg" preload="metadata">
+          <source src="./assets/inclusive-audit-demo.mp4" type="video/mp4" />
+          Your browser doesn’t support embedded video —
+          <a href="./assets/inclusive-audit-demo.mp4">download the demo</a>.
+        </video>
+      </div>
+      <p class="caption">30-second walkthrough — captured from the live plugin UI.</p>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>The problem</h2>
+        <p class="sub">
+          Accessibility is usually checked at the very end — in code, by specialists, long after
+          design decisions are locked in. Most Figma tools only measure color contrast, and none
+          help a designer <em>feel</em> what their interface is like for someone with low vision,
+          color blindness, a motor impairment, or a screen reader.
+        </p>
+        <h2>The solution</h2>
+        <p class="sub">
+          Inclusive Audit brings a full accessibility consultant into the design canvas. Select any
+          frame and it runs eleven independent analyzers, scores the screen, links every issue to
+          the exact layer with a suggested fix — and then lets you step into the shoes of users with
+          different needs through live, on-canvas simulations.
+        </p>
+      </div>
+    </section>
+
+    <section id="features" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+      <div class="wrap">
+        <h2>What it does</h2>
+        <p class="sub">Two connected pillars — measure, then experience.</p>
+        <div class="pillars">
+          <div class="pillar">
+            <img src="./assets/audit-overview.jpg" alt="Accessibility audit overview with score and category grades" />
+            <div class="body">
+              <h3>Accessibility Audit</h3>
+              <p>
+                An overall score and grade, per-category breakdowns, and issue cards with WCAG
+                references, affected layers, a “Locate” button, and applicable one-click fixes.
+                Includes a full color inventory with contrast ratings and accessible replacements.
+              </p>
+              <div class="tags">
+                <span class="tag">11 analyzers</span><span class="tag">WCAG refs</span>
+                <span class="tag">Auto-fixes</span><span class="tag">Color inventory</span>
+                <span class="tag">PDF / JSON / CSV</span>
+              </div>
+            </div>
+          </div>
+          <div class="pillar">
+            <img src="./assets/experience-gallery.jpg" alt="Gallery of the screen rendered under many visual impairments" />
+            <div class="body">
+              <h3>Experience Accessibility</h3>
+              <p>
+                Preview the design through low vision, cataracts, glaucoma, tunnel vision and eight
+                color-vision deficiencies; walk a simulated screen-reader reading order and keyboard
+                focus path; and review motor, hearing, cognitive and motion heuristics — summarized
+                on a radar dashboard.
+              </p>
+              <div class="tags">
+                <span class="tag">Vision sims</span><span class="tag">CVD matrices</span>
+                <span class="tag">Screen reader</span><span class="tag">Keyboard path</span>
+                <span class="tag">Radar score</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="note" style="margin-top:20px;">
+          Simulations are clearly labeled as <strong>educational approximations</strong> to help
+          identify issues — the plugin never claims to replicate an individual’s real experience.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Highlights</h2>
+        <p class="sub">Details that make it feel like a professional tool, not a checker.</p>
+        <div class="grid cols-3">
+          <div class="card"><div class="icon">◎</div><h3>Locate &amp; fix</h3><p>Every issue selects the exact Figma node and can apply a fix (font size, line height, color) in place.</p></div>
+          <div class="card"><div class="icon">◐</div><h3>Real CVD science</h3><p>Color-vision deficiencies use accepted transformation matrices, rendered live on the exported frame.</p></div>
+          <div class="card"><div class="icon">▦</div><h3>Compare gallery</h3><p>See the whole screen across every impairment at once, then click any variation to inspect it.</p></div>
+          <div class="card"><div class="icon">⌨</div><h3>Keyboard &amp; SR</h3><p>Simulated reading order and focus path, stepping through elements and selecting each layer.</p></div>
+          <div class="card"><div class="icon">◱</div><h3>Non-destructive</h3><p>All previews render inside the plugin canvas — your design is never modified.</p></div>
+          <div class="card"><div class="icon">⚡</div><h3>Fast &amp; offline</h3><p>Audits 500+ layers in under 5s and runs fully offline — no design data leaves Figma.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+      <div class="wrap">
+        <h2>Screens</h2>
+        <p class="sub">Captured from the live plugin UI.</p>
+        <div class="shots">
+          <figure><img src="./assets/audit-sections.jpg" alt="Expanded issue details" /><figcaption>Issue detail — severity, WCAG reference, affected layers, and fix.</figcaption></figure>
+          <figure><img src="./assets/color-inventory.jpg" alt="Color inventory" /><figcaption>Color inventory with contrast ratings and suggested replacements.</figcaption></figure>
+          <figure><img src="./assets/experience-cvd.jpg" alt="Color vision deficiency simulation" /><figcaption>Side-by-side color-vision-deficiency simulation.</figcaption></figure>
+          <figure><img src="./assets/experience-screenreader.jpg" alt="Screen reader preview" /><figcaption>Screen-reader reading order with numbered overlays.</figcaption></figure>
+          <figure><img src="./assets/experience-summary.jpg" alt="Experience summary radar" /><figcaption>Experience score with a category radar chart.</figcaption></figure>
+          <figure><img src="./assets/reports.jpg" alt="Report export" /><figcaption>Shareable report — export to PDF, JSON, or CSV.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>How it’s built</h2>
+        <p class="sub">
+          A thin Figma sandbox extracts a serializable snapshot of the frame (and a capped PNG for
+          the visual simulator) and posts it to the UI over a typed message bridge. All analysis is
+          performed by pure, unit-tested modules in the UI thread — so each analyzer and simulation
+          is independent, reusable, and testable without a running Figma instance.
+        </p>
+        <div class="stack" style="margin-bottom:28px;">
+          <span class="chip">TypeScript (strict)</span><span class="chip">React 18</span>
+          <span class="chip">Figma Plugin API</span><span class="chip">Vite</span>
+          <span class="chip">TailwindCSS</span><span class="chip">Radix UI</span>
+          <span class="chip">Zustand</span><span class="chip">Framer Motion</span>
+          <span class="chip">Canvas 2D</span><span class="chip">Vitest</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="n">11</div><div class="l">audit analyzers</div></div>
+          <div class="stat"><div class="n">8</div><div class="l">experience simulations</div></div>
+          <div class="stat"><div class="n">18</div><div class="l">vision variations</div></div>
+          <div class="stat"><div class="n">&lt;5s</div><div class="l">for 500+ layers</div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        Built with care for inclusive design.
+        <span style="margin:0 8px;">·</span>
+        <a href="./assets/inclusive-audit-demo.mp4">Download the demo video</a>
+      </div>
+    </footer>
+  </body>
+</html>
