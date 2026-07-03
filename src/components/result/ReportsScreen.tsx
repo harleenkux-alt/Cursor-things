@@ -10,6 +10,7 @@ import { ExportBar } from './ExportBar';
 export function ReportsScreen() {
   const report = useReport();
   const analyze = useAuditStore((s) => s.analyze);
+  const openAuditCategory = useAuditStore((s) => s.openAuditCategory);
 
   if (!report) {
     return (
@@ -32,7 +33,11 @@ export function ReportsScreen() {
         <div className="mx-auto max-w-2xl space-y-3 p-5">
           <h2 className="text-lg font-semibold">Accessibility Report</h2>
           <ScoreHeader report={report} />
-          <CategoryGrid scores={report.categoryScores} />
+          <CategoryGrid
+            scores={report.categoryScores}
+            issues={report.issues}
+            onSelect={openAuditCategory}
+          />
           <RecommendationsPanel report={report} />
         </div>
       </div>

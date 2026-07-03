@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 import { useAuditStore } from '@/store/useAuditStore';
 import { useReport } from '@/hooks/useAudit';
@@ -15,6 +16,25 @@ const TAB_TRIGGER =
 export function ResultScreen() {
   const report = useReport();
   const analyze = useAuditStore((s) => s.analyze);
+  const tab = useAuditStore((s) => s.auditTab);
+  const setAuditTab = useAuditStore((s) => s.setAuditTab);
+  const openAuditCategory = useAuditStore((s) => s.openAuditCategory);
+  const focusAnalyzerId = useAuditStore((s) => s.focusAnalyzerId);
+  const clearFocus = useAuditStore((s) => s.clearFocus);
+
+  // After landing on the Sections tab, scroll the focused analyzer into view.
+  useEffect(() => {
+    if (tab !== 'sections' || !focusAnalyzerId) return;
+    const id = focusAnalyzerId;
+    const raf = requestAnimationFrame(() => {
+      document.getElementById(`sec-${id}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+      window.setTimeout(clearFocus, 1500);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [tab, focusAnalyzerId, clearFocus]);
 
   if (!report) {
     return (
@@ -41,7 +61,11 @@ export function ResultScreen() {
         </Button>
       </header>
 
-      <Tabs.Root defaultValue="overview" className="flex min-h-0 flex-1 flex-col">
+      <Tabs.Root
+        value={tab}
+        onValueChange={(v) => setAuditTab(v as 'overview' | 'sections')}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <Tabs.List className="mx-auto mt-3 flex w-full max-w-2xl gap-1 rounded-xl bg-[var(--border)]/50 p-1">
           <Tabs.Trigger value="overview" className={TAB_TRIGGER}>
             Overview
@@ -55,13 +79,26 @@ export function ResultScreen() {
           <div className="mx-auto max-w-2xl">
             <Tabs.Content value="overview" className="space-y-3 focus-visible:outline-none">
               <ScoreHeader report={report} />
-              <CategoryGrid scores={report.categoryScores} />
+              <CategoryGrid
+                scores={report.categoryScores}
+                issues={report.issues}
+                onSelect={openAuditCategory}
+              />
               <RecommendationsPanel report={report} />
             </Tabs.Content>
 
             <Tabs.Content value="sections" className="space-y-2.5 focus-visible:outline-none">
               {report.results.map((result) => (
-                <AnalyzerSection key={result.analyzerId} result={result} />
+                <div
+                  key={result.analyzerId}
+                  id={`sec-${result.analyzerId}`}
+                  className="scroll-mt-2"
+                >
+                  <AnalyzerSection
+                    result={result}
+                    highlighted={focusAnalyzerId === result.analyzerId}
+                  />
+                </div>
               ))}
             </Tabs.Content>
           </div>

@@ -3,6 +3,7 @@ import type { AuditReport, FixSuggestion } from '@/types/analysis';
 import type { SelectionState } from '@/types/messages';
 import type { AuditSettings } from '@/types/settings';
 import { DEFAULT_SETTINGS } from '@/types/settings';
+import type { AnalysisCategory } from '@/types/analysis';
 import type { ExperienceReport, FrameImage } from '@/types/experience';
 import { runAnalysis, type RunProgress } from '@/core/analysisRunner';
 import { runExperienceAnalysis } from '@/simulations';
@@ -31,14 +32,22 @@ interface AuditState {
   error: string | null;
   progress: { message: string; percent: number };
   expandedSections: Record<string, boolean>;
+  /** Which tab the Accessibility Audit screen shows. */
+  auditTab: 'overview' | 'sections';
+  /** Analyzer section to scroll to & highlight after navigating. */
+  focusAnalyzerId: string | null;
 
   // actions
   init: () => void;
   setNav: (nav: Nav) => void;
+  setAuditTab: (tab: 'overview' | 'sections') => void;
+  openAuditCategory: (category: AnalysisCategory) => void;
+  clearFocus: () => void;
   analyze: () => void;
   runSimulation: () => void;
   updateSettings: (patch: Partial<AuditSettings>) => void;
   toggleSection: (id: string) => void;
+  expandSections: (ids: string[]) => void;
   locate: (nodeIds: string[]) => void;
   applyFix: (fix: FixSuggestion) => void;
 }
@@ -54,6 +63,8 @@ export const useAuditStore = create<AuditState>((set, get) => ({
   error: null,
   progress: { message: '', percent: 0 },
   expandedSections: {},
+  auditTab: 'overview',
+  focusAnalyzerId: null,
 
   init: () => {
     bridge.subscribe(async (msg) => {
@@ -128,6 +139,25 @@ export const useAuditStore = create<AuditState>((set, get) => ({
   },
 
   setNav: (nav) => set({ nav, error: null }),
+  setAuditTab: (auditTab) => set({ auditTab }),
+  clearFocus: () => set({ focusAnalyzerId: null }),
+
+  openAuditCategory: (category) => {
+    const report = get().report;
+    if (!report) return;
+    const ids = report.results
+      .filter((r) => r.category === category)
+      .map((r) => r.analyzerId);
+    if (ids.length === 0) return;
+    const expanded = { ...get().expandedSections };
+    for (const id of ids) expanded[id] = true;
+    set({
+      nav: 'audit',
+      auditTab: 'sections',
+      expandedSections: expanded,
+      focusAnalyzerId: ids[0] ?? null,
+    });
+  },
 
   analyze: () => {
     const { selection } = get();
@@ -164,6 +194,13 @@ export const useAuditStore = create<AuditState>((set, get) => ({
     set((s) => ({
       expandedSections: { ...s.expandedSections, [id]: !s.expandedSections[id] },
     })),
+
+  expandSections: (ids) =>
+    set((s) => {
+      const next = { ...s.expandedSections };
+      for (const id of ids) next[id] = true;
+      return { expandedSections: next };
+    }),
 
   locate: (nodeIds) => {
     if (nodeIds.length === 0) return;

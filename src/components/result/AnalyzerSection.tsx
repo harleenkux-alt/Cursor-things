@@ -5,14 +5,26 @@ import { Card } from '@/components/ui/Card';
 import { Icon } from '@/components/ui/Icon';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { scoreColor } from '@/components/ui/scoreColor';
+import { cn } from '@/utils/cn';
 import { IssueCard } from './IssueCard';
 
-export function AnalyzerSection({ result }: { result: AnalyzerResult }) {
+export function AnalyzerSection({
+  result,
+  highlighted = false,
+}: {
+  result: AnalyzerResult;
+  highlighted?: boolean;
+}) {
   const [expanded, toggle] = useSectionExpansion(result.analyzerId);
   const color = scoreColor(result.score);
 
   return (
-    <Card className="overflow-hidden">
+    <Card
+      className={cn(
+        'overflow-hidden transition-shadow',
+        highlighted && 'ring-2 ring-brand-500/50',
+      )}
+    >
       <button
         onClick={toggle}
         className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.03]"
