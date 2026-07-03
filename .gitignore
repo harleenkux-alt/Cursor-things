@@ -1,4 +1,6 @@
 node_modules/
+demo-dist/
+media/
 *.local
 .DS_Store
 .env

@@ -11,6 +11,10 @@
     "build:ui": "vite build --config vite.config.ui.ts",
     "build:main": "vite build --config vite.config.main.ts",
     "typecheck": "tsc --noEmit",
+    "demo": "npm run demo:build && npm run demo:capture && npm run demo:video",
+    "demo:build": "vite build --config vite.config.demo.ts",
+    "demo:capture": "node scripts/capture.mjs",
+    "demo:video": "node scripts/build-video.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint \"src/**/*.{ts,tsx}\""
@@ -42,6 +46,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.1",
     "postcss": "^8.5.2",
+    "puppeteer-core": "^23.11.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
